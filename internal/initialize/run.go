@@ -1,9 +1,18 @@
 package initialize
 
-import "github.com/gin-gonic/gin"
+import (
+	"log"
+
+	"github.com/gin-gonic/gin"
+)
 
 func Run() *gin.Engine {
-	r := InitRouter()
+	LoadConfig()
+
 	InitPostgres()
+	InitTokenMaker()
+	log.Println("Config ok")
+	r := InitRouter()
+
 	return r
 }

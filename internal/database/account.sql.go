@@ -10,10 +10,10 @@ import (
 )
 
 const addAccountBalance = `-- name: AddAccountBalance :one
-update accounts
-set balance = balance + $1
-where id = $2
-returning id, owner, balance, currency, created_at
+UPDATE accounts
+SET balance = balance + $1
+WHERE id = $2
+RETURNING id, owner, balance, currency, created_at
 `
 
 type AddAccountBalanceParams struct {
@@ -35,14 +35,13 @@ func (q *Queries) AddAccountBalance(ctx context.Context, arg AddAccountBalancePa
 }
 
 const createAccount = `-- name: CreateAccount :one
-insert into accounts (
-    owner,
-    balance,
-    currency
-) values (
-    $1,$2, $3
-)
-returning id, owner, balance, currency, created_at
+INSERT INTO accounts (
+  owner,
+  balance,
+  currency
+) VALUES (
+  $1, $2, $3
+) RETURNING id, owner, balance, currency, created_at
 `
 
 type CreateAccountParams struct {
@@ -65,8 +64,8 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 }
 
 const deleteAccount = `-- name: DeleteAccount :exec
-delete from accounts
-where id = $1
+DELETE FROM accounts
+WHERE id = $1
 `
 
 func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
@@ -75,8 +74,8 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
 }
 
 const getAccount = `-- name: GetAccount :one
-select id, owner, balance, currency, created_at from accounts 
-where id = $1 limit 1
+SELECT id, owner, balance, currency, created_at FROM accounts
+WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
@@ -93,9 +92,9 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 }
 
 const getAccountForUpdate = `-- name: GetAccountForUpdate :one
-select id, owner, balance, currency, created_at from accounts 
-where id = $1 limit 1
-for no key update
+SELECT id, owner, balance, currency, created_at FROM accounts
+WHERE id = $1 LIMIT 1
+FOR NO KEY UPDATE
 `
 
 func (q *Queries) GetAccountForUpdate(ctx context.Context, id int64) (Account, error) {
@@ -112,19 +111,21 @@ func (q *Queries) GetAccountForUpdate(ctx context.Context, id int64) (Account, e
 }
 
 const listAccounts = `-- name: ListAccounts :many
-select id, owner, balance, currency, created_at from accounts
-order by id
-limit $1
-offset $2
+SELECT id, owner, balance, currency, created_at FROM accounts
+WHERE owner = $1
+ORDER BY id
+LIMIT $2
+OFFSET $3
 `
 
 type ListAccountsParams struct {
-	Limit  int32 `json:"limit"`
-	Offset int32 `json:"offset"`
+	Owner  string `json:"owner"`
+	Limit  int32  `json:"limit"`
+	Offset int32  `json:"offset"`
 }
 
 func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]Account, error) {
-	rows, err := q.db.QueryContext(ctx, listAccounts, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listAccounts, arg.Owner, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -153,10 +154,10 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 }
 
 const updateAccount = `-- name: UpdateAccount :one
-update accounts
-set balance = $2
-where id = $1
-returning id, owner, balance, currency, created_at
+UPDATE accounts
+SET balance = $2
+WHERE id = $1
+RETURNING id, owner, balance, currency, created_at
 `
 
 type UpdateAccountParams struct {
