@@ -9,5 +9,5 @@ import (
 
 func InitServiceInterface() {
 	queries := database.New(global.Postgres)
-	service.InitUserLogin(impl.NewUserLoginImpl(queries))
+	service.InitUserLogin(impl.NewUserLoginImpl(queries, global.Postgres))
 }

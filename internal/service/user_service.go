@@ -1,7 +1,19 @@
 package service
 
+import (
+	"Golang-Masterclass/simplebank/internal/database"
+	"Golang-Masterclass/simplebank/internal/models"
+	"context"
+
+	"github.com/gin-gonic/gin"
+)
+
 type (
-	IUserLogin interface{}
+	IUserLogin interface {
+		CreateUserTx(ctx context.Context, arg *models.CreateUserTxParams) (rs models.CreateUserTxResult, err error)
+		LoginUser(ctx *gin.Context, req models.LoginUserRequest)
+		CreateUser(ctx *gin.Context, req *models.CreateUserRequest) (database.User, error)
+	}
 )
 
 var (

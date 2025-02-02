@@ -11,6 +11,8 @@ func Run() *gin.Engine {
 
 	InitPostgres()
 	InitTokenMaker()
+	InitRedis()
+	InitServiceInterface()
 	log.Println("Config ok")
 	r := InitRouter()
 

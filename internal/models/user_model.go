@@ -1,6 +1,7 @@
 package models
 
 import (
+	"Golang-Masterclass/simplebank/internal/database"
 	"time"
 
 	"github.com/google/uuid"
@@ -32,4 +33,13 @@ type LoginUserResponse struct {
 	RefreshToken          string       `json:"refresh_token"`
 	RefreshTokenExpiresAt time.Time    `json:"refresh_token_expires_at"`
 	User                  UserResponse `json:"user"`
+}
+
+type CreateUserTxParams struct {
+	database.CreateUserParams
+	AfterCreate func(user database.User) error
+}
+
+type CreateUserTxResult struct {
+	User database.User
 }

@@ -35,4 +35,6 @@ proto:
 	proto/*.proto
 evans: 
 	evans --host localhost --port 9099 -r repl
+redis:
+	docker run --name spbank_redis -p 6379:6380 -d redis:latest
 .PHONY: createdb dropdb postgres migratedown migrateup sqlc server mock migratedown1 migrateup1 proto evans 
